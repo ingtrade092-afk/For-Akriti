@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Love Countdown ❤️</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body{
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:linear-gradient(135deg,#ff4d6d,#ff758f);
+        overflow:hidden;
+        color:white;
+        text-align:center;
+    }
+
+    .container{
+        background:rgba(255,255,255,0.15);
+        padding:40px;
+        border-radius:25px;
+        backdrop-filter:blur(10px);
+        box-shadow:0 0 30px rgba(0,0,0,0.2);
+        max-width:700px;
+    }
+
+    h1{
+        font-size:3rem;
+        margin-bottom:10px;
+    }
+
+    p{
+        font-size:1.2rem;
+        margin-bottom:25px;
+    }
+
+    .countdown{
+        display:flex;
+        justify-content:center;
+        gap:15px;
+        flex-wrap:wrap;
+    }
+
+    .box{
+        background:white;
+        color:#ff4d6d;
+        padding:20px;
+        border-radius:15px;
+        min-width:100px;
+    }
+
+    .box span{
+        font-size:2rem;
+        font-weight:bold;
+        display:block;
+    }
+
+    .heart{
+        position:absolute;
+        color:white;
+        animation:float 8s linear infinite;
+    }
+
+    @keyframes float{
+        0%{
+            transform:translateY(100vh);
+            opacity:0;
+        }
+        100%{
+            transform:translateY(-100px);
+            opacity:1;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>❤️ My Love ❤️</h1>
+    <p>Every second brings me closer to seeing you again.</p>
+
+    <div class="countdown">
+        <div class="box">
+            <span id="days">0</span>
+            Days
+        </div>
+
+        <div class="box">
+            <span id="hours">0</span>
+            Hours
+        </div>
+
+        <div class="box">
+            <span id="minutes">0</span>
+            Minutes
+        </div>
+
+        <div class="box">
+            <span id="seconds">0</span>
+            Seconds
+        </div>
+    </div>
+
+    <br>
+    <h2 id="message">Waiting for our special moment 💕</h2>
+</div>
+
+<script>
+
+// Meeting Date (Change this)
+const meetDate = new Date("2026-07-01 18:00:00").getTime();
+
+function updateCountdown(){
+    const now = new Date().getTime();
+    const distance = meetDate - now;
+
+    if(distance <= 0){
+        document.getElementById("message").innerHTML =
+        "🎉 Finally Together My Love! ❤️";
+        return;
+    }
+
+    document.getElementById("days").innerHTML =
+    Math.floor(distance/(1000*60*60*24));
+
+    document.getElementById("hours").innerHTML =
+    Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+
+    document.getElementById("minutes").innerHTML =
+    Math.floor((distance%(1000*60*60))/(1000*60));
+
+    document.getElementById("seconds").innerHTML =
+    Math.floor((distance%(1000*60))/1000);
+}
+
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+function createHeart(){
+    const heart=document.createElement("div");
+    heart.classList.add("heart");
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*20+15)+"px";
+    document.body.appendChild(heart);
+
+    setTimeout(()=>{
+        heart.remove();
+    },8000);
+}
+
+setInterval(createHeart,500);
+
+</script>
+
+</body>
+</html>
