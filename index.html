@@ -11,113 +11,157 @@ body{
   background:linear-gradient(135deg,#ff4fd8,#7a5cff);
   color:white;
   text-align:center;
+  overflow:hidden;
 }
 
-.container{
-  margin-top:60px;
-}
+.container{margin-top:50px;}
 
 button{
-  padding:12px 18px;
+  padding:12px;
   border:none;
   border-radius:10px;
   background:white;
   color:#ff4fd8;
   font-weight:bold;
-  cursor:pointer;
   margin:10px;
+  cursor:pointer;
 }
 
 #countdown{
-  font-size:30px;
+  font-size:32px;
   margin-top:20px;
 }
 
-#msg{
-  margin-top:20px;
+.msg{
   font-size:20px;
+  margin-top:15px;
+}
+
+/* hearts */
+.heart{
+  position:fixed;
+  top:100%;
+  color:white;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  to{
+    transform:translateY(-120vh);
+    opacity:0;
+  }
+}
+
+/* popup */
+.popup{
+  display:none;
+  position:fixed;
+  top:40%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  color:#ff4fd8;
+  padding:20px;
+  border-radius:15px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
 <h1>💜 Anmol ❤️ Akriti 💜</h1>
 
-<button onclick="openForm()">💌 Enter Our Meeting Date</button>
+<div class="container">
 
-<h2>⏳ Countdown</h2>
+<button onclick="openForm()">💌 Enter Date</button>
+<button onclick="confirm()">✔ I Have Submitted Date</button>
+
 <div id="countdown">Waiting for Akriti 💖</div>
+<div class="msg" id="msg">Missing you 🥺</div>
 
-<div id="msg">I Love You ❤️</div>
+</div>
 
+<div class="popup" id="popup">
+💖 Date Saved Successfully ❤️
 </div>
 
 <script>
 
-const FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSfMNpEa4K0tIDZ04kEg68WK4yFjLxikC80dXxduPwJM7bDESw/viewform?usp=sharing&ouid=106823344659274536521";
-
-// 🔥 PASTE YOUR APPS SCRIPT URL HERE
-const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
+const FORM = "https://docs.google.com/forms/d/e/1FAIpQLSfMNpEa4K0tIDZ04kEg68WK4yFjLxikC80dXxduPwJM7bDESw/viewform?usp=sharing&ouid=106823344659274536521";
 
 function openForm(){
-  window.open(FORM_LINK, "_blank");
+  window.open(FORM,"_blank");
 }
 
-function fetchData(){
-  fetch(API_URL)
-  .then(res => res.json())
-  .then(data => {
+function confirm(){
+  let date = prompt("Enter the same date you submitted 💖");
+  if(date){
+    localStorage.setItem("date",date);
+    showPopup();
+    start();
+  }
+}
 
-    if(data.date){
-      if(!localStorage.getItem("locked")){
-        localStorage.setItem("date", data.date);
-        localStorage.setItem("locked","yes");
-      }
+function showPopup(){
+  document.getElementById("popup").style.display="block";
+  setTimeout(()=>{
+    document.getElementById("popup").style.display="none";
+  },2000);
+}
+
+function start(){
+
+  setInterval(()=>{
+
+    let date = localStorage.getItem("date");
+    if(!date){
+      document.getElementById("countdown").innerText =
+      "Waiting for Akriti 💖";
+      return;
     }
 
-  }).catch(()=>{});
-}
+    let target = new Date(date).getTime();
+    let now = new Date().getTime();
+    let diff = target - now;
 
-function updateCountdown(){
+    if(diff <= 0){
+      document.getElementById("countdown").innerHTML =
+      "💖 See You Soon My Love ❤️";
+      return;
+    }
 
-  let date = localStorage.getItem("date");
+    let d = Math.floor(diff/(1000*60*60*24));
+    let h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+    let m = Math.floor((diff%(1000*60*60))/(1000*60));
+    let s = Math.floor((diff%(1000*60))/1000);
 
-  if(!date){
     document.getElementById("countdown").innerText =
-    "Waiting for Akriti to enter date 💖";
-    return;
-  }
+    `${d}d ${h}h ${m}m ${s}s ❤️`;
 
-  let target = new Date(date).getTime();
-  let now = new Date().getTime();
-  let diff = target - now;
+    let msgs = [
+      "Missing you 🥺",
+      "I Love You ❤️",
+      "You are my world 💜",
+      "Come soon ❤️"
+    ];
 
-  if(diff <= 0){
-    document.getElementById("countdown").innerHTML =
-    "💖 See You Soon My Love ❤️";
-    return;
-  }
+    document.getElementById("msg").innerText =
+    msgs[Math.floor(Math.random()*msgs.length)];
 
-  let d = Math.floor(diff/(1000*60*60*24));
-  let h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
-  let m = Math.floor((diff%(1000*60*60))/(1000*60));
-  let s = Math.floor((diff%(1000*60))/1000);
-
-  document.getElementById("countdown").innerText =
-  `${d}d ${h}h ${m}m ${s}s ❤️`;
-
-  let msgs = ["I Love You bauaa ❤️","Miss You 🥺","Forever Us 💜","You are my world ❤️"];
-  document.getElementById("msg").innerText =
-  msgs[Math.floor(Math.random()*msgs.length)];
+  },1000);
 }
 
-setInterval(fetchData,5000);
-setInterval(updateCountdown,1000);
+start();
 
-fetchData();
+/* hearts */
+setInterval(()=>{
+  let h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤️";
+  h.style.left=Math.random()*100+"vw";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),6000);
+},400);
 
 </script>
 
