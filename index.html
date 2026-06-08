@@ -111,23 +111,20 @@ button{
 
 <div class="container">
 
-<h1 id="title">💜 Anmol ❤️ Akriti 💜</h1>
+<h1>💜 Anmol ❤️ Akriti 💜</h1>
 <p>Forever starts here...</p>
 
-<!-- MUSIC -->
-<audio id="music" loop>
-  <!-- Replace this with your own song file -->
+<!-- AUTO MUSIC -->
+<audio id="music" autoplay loop>
+  <!-- Apna song yaha daal sakte ho -->
   <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
 </audio>
 
-<button onclick="playMusic()">🎵 Play Romantic Music</button>
 <button onclick="toggleMode()">🌙 Dark Mode</button>
 
 <!-- SETUP -->
 <div class="box" id="setupBox">
-  <h2>Enter Details ❤️</h2>
-  <input placeholder="Your Name" id="name1">
-  <input placeholder="Partner Name" id="name2"><br>
+  <h2>Enter Next Meeting Date ❤️</h2>
   <input type="datetime-local" id="dateInput">
   <br>
   <button onclick="start()">Start Countdown 💖</button>
@@ -187,10 +184,11 @@ let msgIndex = 0;
 let interval;
 let targetDate;
 
-/* PLAY MUSIC */
-function playMusic(){
-  document.getElementById("music").play();
-}
+/* AUTO PLAY FIX (browser restriction bypass) */
+document.addEventListener("click", () => {
+  let music = document.getElementById("music");
+  music.play().catch(()=>{});
+}, { once: true });
 
 /* DARK MODE */
 function toggleMode(){
@@ -200,18 +198,19 @@ function toggleMode(){
 /* START */
 function start(){
   let input = document.getElementById("dateInput").value;
-  let n1 = document.getElementById("name1").value;
-  let n2 = document.getElementById("name2").value;
 
   if(!input) return;
 
   localStorage.setItem("loveDate", input);
 
-  if(n1 && n2){
-    document.getElementById("title").innerText = `💜 ${n1} ❤️ ${n2} 💜`;
-  }
-
   targetDate = new Date(input);
+  showMain();
+  startCountdown();
+}
+
+/* LOAD SAVED */
+if(localStorage.getItem("loveDate")){
+  targetDate = new Date(localStorage.getItem("loveDate"));
   showMain();
   startCountdown();
 }
