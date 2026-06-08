@@ -17,13 +17,7 @@ body{
   background:linear-gradient(135deg,#ff4fd8,#7a5cff);
   color:white;
   min-height:100vh;
-  overflow-x:hidden;
   text-align:center;
-  transition:0.5s;
-}
-
-.dark{
-  background:black;
 }
 
 .container{
@@ -37,14 +31,13 @@ body{
   backdrop-filter:blur(10px);
   max-width:800px;
   margin:20px auto;
-  box-shadow:0 0 20px rgba(0,0,0,0.3);
 }
 
 input{
   padding:10px;
   border:none;
   border-radius:10px;
-  width:220px;
+  width:250px;
   margin:5px;
 }
 
@@ -62,9 +55,8 @@ button{
 .countdown{
   display:flex;
   justify-content:center;
-  flex-wrap:wrap;
   gap:10px;
-  margin-top:15px;
+  flex-wrap:wrap;
 }
 
 .time{
@@ -72,7 +64,6 @@ button{
   color:#ff4fd8;
   padding:15px;
   border-radius:15px;
-  min-width:80px;
 }
 
 .message{
@@ -81,28 +72,13 @@ button{
   min-height:40px;
 }
 
-.heart{
-  position:fixed;
-  top:100%;
-  color:white;
-  animation:float 6s linear infinite;
-}
-
-@keyframes float{
-  to{
-    transform:translateY(-120vh);
-    opacity:0;
-  }
-}
-
 .hidden{
   display:none;
 }
 
-#letter{
-  display:none;
-  margin-top:10px;
-  font-style:italic;
+iframe{
+  margin-top:15px;
+  border-radius:15px;
 }
 </style>
 </head>
@@ -114,20 +90,14 @@ button{
 <h1>💜 Anmol ❤️ Akriti 💜</h1>
 <p>Forever starts here...</p>
 
-<!-- AUTO MUSIC -->
-<audio id="music" autoplay loop>
-  <!-- Apna song yaha daal sakte ho -->
-  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
-</audio>
-
-<button onclick="toggleMode()">🌙 Dark Mode</button>
-
 <!-- SETUP -->
 <div class="box" id="setupBox">
-  <h2>Enter Meeting Date ❤️</h2>
-  <input type="datetime-local" id="dateInput">
-  <br>
-  <button onclick="start()">Start Countdown 💖</button>
+  <h2>Enter Details ❤️</h2>
+  
+  <input type="datetime-local" id="dateInput"><br>
+  <input placeholder="Paste YouTube Song Link" id="https://youtube.com/shorts/7nU5h4_91ss?si=108ZkK39ragg1I0t"><br>
+
+  <button onclick="start()">Start 💖</button>
 </div>
 
 <!-- MAIN -->
@@ -142,97 +112,78 @@ button{
   <div class="time"><span id="s">0</span><br>Sec</div>
 </div>
 
-<div class="message" id="msg">I Love You ❤️</div>
+<div class="message" id="msg"></div>
 
-</div>
+<!-- YOUTUBE PLAYER -->
+<div id="player"></div>
 
-<!-- TIMELINE -->
-<div class="box hidden" id="timeline">
-<h2>📅 Our Story</h2>
-<p>💞 First Meeting: June 2026</p>
-<p>💞 Jaldi milo na babu ❤️</p>
-</div>
-
-<!-- EXTRA -->
-<div class="box hidden" id="extra">
-<button onclick="missMe()">🥺 Tap If You Miss Me</button>
-<button onclick="toggleLetter()">💌 Open Love Letter</button>
-
-<div id="letter">
-My Love ❤️<br><br>
-You are my peace, my happiness,<br>
-my everything 🥺💜<br><br>
-No matter what happens,<br>
-I will always choose you ❤️<br><br>
-Forever Yours 💞
-</div>
 </div>
 
 </div>
 
 <script>
 
+/* ❤️ MESSAGES */
 let messages = [
-"I  Love  You ❤️",
-"You  are  my  world 💜",
-"I  miss  you 🥺",
-"You  are  my  forever ❤️",
-"Only  you  & me 💞"
+"I Love You ❤️",
+"You are my world 💜",
+"I miss you 🥺",
+"You are my forever ❤️",
+"Only you & me 💞"
 ];
 
 let msgIndex = 0;
+let typingInterval;
 let interval;
 let targetDate;
 
-/* AUTO PLAY FIX (browser restriction bypass) */
-document.addEventListener("click", () => {
-  let music = document.getElementById("music");
-  music.play().catch(()=>{});
-}, { once: true });
-
-/* DARK MODE */
-function toggleMode(){
-  document.body.classList.toggle("dark");
-}
-
 /* START */
 function start(){
-  let input = document.getElementById("dateInput").value;
+  let dateVal = document.getElementById("dateInput").value;
+  let yt = document.getElementById("ytLink").value;
 
-  if(!input) return;
+  if(!dateVal) return;
 
-  localStorage.setItem("loveDate", input);
+  targetDate = new Date(dateVal);
 
-  targetDate = new Date(input);
-  showMain();
-  startCountdown();
-}
+  /* YOUTUBE LINK PROCESS */
+  let videoId = "";
 
-/* LOAD SAVED */
-if(localStorage.getItem("loveDate")){
-  targetDate = new Date(localStorage.getItem("loveDate"));
-  showMain();
-  startCountdown();
-}
+  if(yt.includes("watch?v=")){
+    videoId = yt.split("watch?v=")[1].split("&")[0];
+  } 
+  else if(yt.includes("youtu.be/")){
+    videoId = yt.split("youtu.be/")[1];
+  }
 
-/* SHOW */
-function showMain(){
+  if(videoId){
+    document.getElementById("player").innerHTML = `
+      <iframe width="300" height="170"
+      src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}"
+      allow="autoplay"></iframe>
+    `;
+  }
+
   document.getElementById("setupBox").classList.add("hidden");
   document.getElementById("mainBox").classList.remove("hidden");
-  document.getElementById("timeline").classList.remove("hidden");
-  document.getElementById("extra").classList.remove("hidden");
+
+  startCountdown();
 }
 
-/* TYPING EFFECT */
+/* TYPING FIXED */
 function typeText(text){
+  clearInterval(typingInterval);
+
   let i = 0;
   let el = document.getElementById("msg");
   el.innerText = "";
 
-  let typing = setInterval(()=>{
+  typingInterval = setInterval(()=>{
     el.innerText += text[i];
     i++;
-    if(i >= text.length) clearInterval(typing);
+    if(i >= text.length){
+      clearInterval(typingInterval);
+    }
   },50);
 }
 
@@ -245,7 +196,6 @@ function startCountdown(){
     if(dist <= 0){
       document.body.innerHTML = `
       <h1 style="margin-top:30vh;">💖 Finally Together ❤️</h1>
-      <p>This moment was worth the wait 🥺</p>
       `;
       clearInterval(interval);
       return;
@@ -267,28 +217,6 @@ function startCountdown(){
 
   },1000);
 }
-
-/* MISS ME */
-function missMe(){
-  alert("🥺 I miss you too ❤️");
-}
-
-/* LETTER */
-function toggleLetter(){
-  let l = document.getElementById("letter");
-  l.style.display = l.style.display === "block" ? "none" : "block";
-}
-
-/* HEARTS */
-setInterval(()=>{
-  let h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = "❤️";
-  h.style.left = Math.random()*100 + "vw";
-  h.style.fontSize = Math.random()*20 + 10 + "px";
-  document.body.appendChild(h);
-  setTimeout(()=>h.remove(),6000);
-},400);
 
 </script>
 
