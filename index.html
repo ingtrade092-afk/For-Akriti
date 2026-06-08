@@ -1,111 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anmol ❤️ Akriti</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
-
 body{
+  margin:0;
+  font-family:Arial;
   background:linear-gradient(135deg,#ff4fd8,#7a5cff);
   color:white;
-  min-height:100vh;
-  overflow-x:hidden;
   text-align:center;
 }
 
-/* container */
 .container{
-  padding:20px;
+  margin-top:60px;
 }
 
-/* glass box */
-.box{
-  background:rgba(255,255,255,0.15);
-  padding:20px;
-  border-radius:20px;
-  backdrop-filter:blur(10px);
-  max-width:800px;
-  margin:20px auto;
-  box-shadow:0 0 20px rgba(0,0,0,0.3);
-}
-
-/* input */
-input{
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  width:220px;
-}
-
-/* buttons */
 button{
-  padding:10px 15px;
+  padding:12px 18px;
   border:none;
   border-radius:10px;
-  cursor:pointer;
-  margin:10px;
   background:white;
   color:#ff4fd8;
   font-weight:bold;
+  cursor:pointer;
+  margin:10px;
 }
 
-/* countdown */
-.countdown{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:15px;
-}
-
-.time{
-  background:white;
-  color:#ff4fd8;
-  padding:15px;
-  border-radius:15px;
-  min-width:80px;
-}
-
-/* love messages */
-.message{
-  font-size:1.5rem;
+#countdown{
+  font-size:30px;
   margin-top:20px;
-  min-height:40px;
 }
 
-/* floating hearts */
-.heart{
-  position:fixed;
-  top:100%;
-  color:white;
-  animation:float 6s linear infinite;
-}
-
-@keyframes float{
-  to{
-    transform:translateY(-120vh);
-    opacity:0;
-  }
-}
-
-/* hidden sections */
-.hidden{
-  display:none;
-}
-
-/* letter */
-#letter{
-  display:none;
-  margin-top:10px;
-  font-style:italic;
+#msg{
+  margin-top:20px;
+  font-size:20px;
 }
 </style>
 </head>
@@ -115,149 +45,79 @@ button{
 <div class="container">
 
 <h1>💜 Anmol ❤️ Akriti 💜</h1>
-<p>Forever starts here...</p>
 
-<!-- DATE INPUT -->
-<div class="box" id="setupBox">
-  <h2>Enter Next Meeting Date ❤️</h2>
-  <input type="datetime-local" id="dateInput">
-  <br>
-  <button onclick="start()">Start Countdown 💖</button>
-</div>
+<button onclick="openForm()">💌 Enter Our Meeting Date</button>
 
-<!-- COUNTDOWN -->
-<div class="box hidden" id="mainBox">
+<h2>⏳ Countdown</h2>
+<div id="countdown">Waiting for Akriti 💖</div>
 
-<h2>⏳ Countdown to Our Meeting</h2>
-
-<div class="countdown">
-  <div class="time"><span id="d">0</span><br>Days</div>
-  <div class="time"><span id="h">0</span><br>Hours</div>
-  <div class="time"><span id="m">0</span><br>Min</div>
-  <div class="time"><span id="s">0</span><br>Sec</div>
-</div>
-
-<div class="message" id="msg">I Love You ❤️</div>
-
-</div>
-
-<!-- TIMELINE -->
-<div class="box hidden" id="timeline">
-<h2>📅 Our Story</h2>
-<p>💞 First Meeting: 14 July 2026</p>
-<p>💞 Next Meeting: Locked Forever ❤️</p>
-</div>
-
-<!-- LOVE BUTTON -->
-<div class="box hidden" id="extra">
-<button onclick="missMe()">🥺 Tap If You Miss Me</button>
-<button onclick="toggleLetter()">💌 Open Love Letter</button>
-
-<div id="letter">
-My Love Akriti ❤️<br><br>
-You are not just a person for me,<br>
-you are my peace, my smile, my everything.<br><br>
-No matter how far we are,<br>
-my heart always finds you.<br><br>
-Forever yours — Anmol ❤️
-</div>
-</div>
+<div id="msg">I Love You ❤️</div>
 
 </div>
 
 <script>
 
-let messages = [
-"I Love You ❤️",
-"You are my world 💜",
-"I miss you 🥺",
-"You are my forever ❤️",
-"Only you & me 💞"
-];
+const FORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSfMNpEa4K0tIDZ04kEg68WK4yFjLxikC80dXxduPwJM7bDESw/viewform?usp=sharing&ouid=106823344659274536521";
 
-let msgIndex = 0;
-let interval;
-let targetDate;
+// 🔥 PASTE YOUR APPS SCRIPT URL HERE
+const API_URL = "PASTE_YOUR_SCRIPT_URL_HERE";
 
-// load saved date
-if(localStorage.getItem("loveDate")){
-  targetDate = new Date(localStorage.getItem("loveDate"));
-  showMain();
-  startCountdown();
+function openForm(){
+  window.open(FORM_LINK, "_blank");
 }
 
-function start(){
-  let input = document.getElementById("dateInput").value;
-  if(!input) return;
+function fetchData(){
+  fetch(API_URL)
+  .then(res => res.json())
+  .then(data => {
 
-  if(!localStorage.getItem("loveDate")){
-    localStorage.setItem("loveDate", input);
-  }
-
-  targetDate = new Date(input);
-  showMain();
-  startCountdown();
-}
-
-function showMain(){
-  document.getElementById("setupBox").classList.add("hidden");
-  document.getElementById("mainBox").classList.remove("hidden");
-  document.getElementById("timeline").classList.remove("hidden");
-  document.getElementById("extra").classList.remove("hidden");
-}
-
-function startCountdown(){
-  interval = setInterval(()=>{
-    let now = new Date().getTime();
-    let dist = targetDate - now;
-
-    if(dist <= 0){
-      document.body.innerHTML = `
-      <h1 style="margin-top:40vh;">💖 See You Soon My Love ❤️</h1>
-      `;
-      clearInterval(interval);
-      return;
+    if(data.date){
+      if(!localStorage.getItem("locked")){
+        localStorage.setItem("date", data.date);
+        localStorage.setItem("locked","yes");
+      }
     }
 
-    document.getElementById("d").innerText =
-      Math.floor(dist/(1000*60*60*24));
-
-    document.getElementById("h").innerText =
-      Math.floor((dist%(1000*60*60*24))/(1000*60*60));
-
-    document.getElementById("m").innerText =
-      Math.floor((dist%(1000*60*60))/(1000*60));
-
-    document.getElementById("s").innerText =
-      Math.floor((dist%(1000*60))/1000);
-
-    document.getElementById("msg").innerText =
-      messages[msgIndex++ % messages.length];
-
-  },1000);
+  }).catch(()=>{});
 }
 
-/* miss me */
-function missMe(){
-  alert("🥺 I miss you too Akriti ❤️");
+function updateCountdown(){
+
+  let date = localStorage.getItem("date");
+
+  if(!date){
+    document.getElementById("countdown").innerText =
+    "Waiting for Akriti to enter date 💖";
+    return;
+  }
+
+  let target = new Date(date).getTime();
+  let now = new Date().getTime();
+  let diff = target - now;
+
+  if(diff <= 0){
+    document.getElementById("countdown").innerHTML =
+    "💖 See You Soon My Love ❤️";
+    return;
+  }
+
+  let d = Math.floor(diff/(1000*60*60*24));
+  let h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  let m = Math.floor((diff%(1000*60*60))/(1000*60));
+  let s = Math.floor((diff%(1000*60))/1000);
+
+  document.getElementById("countdown").innerText =
+  `${d}d ${h}h ${m}m ${s}s ❤️`;
+
+  let msgs = ["I Love You bauaa ❤️","Miss You 🥺","Forever Us 💜","You are my world ❤️"];
+  document.getElementById("msg").innerText =
+  msgs[Math.floor(Math.random()*msgs.length)];
 }
 
-/* letter */
-function toggleLetter(){
-  let l = document.getElementById("letter");
-  l.style.display = l.style.display === "block" ? "none" : "block";
-}
+setInterval(fetchData,5000);
+setInterval(updateCountdown,1000);
 
-/* hearts */
-setInterval(()=>{
-  let h = document.createElement("div");
-  h.className = "heart";
-  h.innerHTML = "❤️";
-  h.style.left = Math.random()*100 + "vw";
-  h.style.fontSize = Math.random()*20 + 10 + "px";
-  document.body.appendChild(h);
-  setTimeout(()=>h.remove(),6000);
-},400);
+fetchData();
 
 </script>
 
