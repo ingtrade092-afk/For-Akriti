@@ -19,14 +19,17 @@ body{
   min-height:100vh;
   overflow-x:hidden;
   text-align:center;
+  transition:0.5s;
 }
 
-/* container */
+.dark{
+  background:black;
+}
+
 .container{
   padding:20px;
 }
 
-/* glass box */
 .box{
   background:rgba(255,255,255,0.15);
   padding:20px;
@@ -37,15 +40,14 @@ body{
   box-shadow:0 0 20px rgba(0,0,0,0.3);
 }
 
-/* input */
 input{
   padding:10px;
   border:none;
   border-radius:10px;
   width:220px;
+  margin:5px;
 }
 
-/* buttons */
 button{
   padding:10px 15px;
   border:none;
@@ -57,7 +59,6 @@ button{
   font-weight:bold;
 }
 
-/* countdown */
 .countdown{
   display:flex;
   justify-content:center;
@@ -74,14 +75,12 @@ button{
   min-width:80px;
 }
 
-/* love messages */
 .message{
   font-size:1.5rem;
   margin-top:20px;
   min-height:40px;
 }
 
-/* floating hearts */
 .heart{
   position:fixed;
   top:100%;
@@ -96,12 +95,10 @@ button{
   }
 }
 
-/* hidden sections */
 .hidden{
   display:none;
 }
 
-/* letter */
 #letter{
   display:none;
   margin-top:10px;
@@ -114,18 +111,29 @@ button{
 
 <div class="container">
 
-<h1>💜 Anmol ❤️ Akriti 💜</h1>
+<h1 id="title">💜 Anmol ❤️ Akriti 💜</h1>
 <p>Forever starts here...</p>
 
-<!-- DATE INPUT -->
+<!-- MUSIC -->
+<audio id="music" loop>
+  <!-- Replace this with your own song file -->
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg">
+</audio>
+
+<button onclick="playMusic()">🎵 Play Romantic Music</button>
+<button onclick="toggleMode()">🌙 Dark Mode</button>
+
+<!-- SETUP -->
 <div class="box" id="setupBox">
-  <h2>Enter Next Meeting Date ❤️</h2>
+  <h2>Enter Details ❤️</h2>
+  <input placeholder="Your Name" id="name1">
+  <input placeholder="Partner Name" id="name2"><br>
   <input type="datetime-local" id="dateInput">
   <br>
   <button onclick="start()">Start Countdown 💖</button>
 </div>
 
-<!-- COUNTDOWN -->
+<!-- MAIN -->
 <div class="box hidden" id="mainBox">
 
 <h2>⏳ Countdown to Our Meeting</h2>
@@ -144,22 +152,22 @@ button{
 <!-- TIMELINE -->
 <div class="box hidden" id="timeline">
 <h2>📅 Our Story</h2>
-<p>💞 First Meeting: june 2026</p>
-<p>💞 You Don't Know my heartbeat Spikes Please Babu Meet me Soon ❤️</p>
+<p>💞 First Meeting: June 2026</p>
+<p>💞 Jaldi milo na babu ❤️</p>
 </div>
 
-<!-- LOVE BUTTON -->
+<!-- EXTRA -->
 <div class="box hidden" id="extra">
 <button onclick="missMe()">🥺 Tap If You Miss Me</button>
 <button onclick="toggleLetter()">💌 Open Love Letter</button>
 
 <div id="letter">
-My Love Akriti ❤️<br><br>
-You are not just a person for me,<br>
-you are my peace, my smile, my everything.<br><br>
-No matter how far we are,<br>
-my heart always finds you.<br><br>
-Forever yours — Anmol ❤️
+My Love ❤️<br><br>
+You are my peace, my happiness,<br>
+my everything 🥺💜<br><br>
+No matter what happens,<br>
+I will always choose you ❤️<br><br>
+Forever Yours 💞
 </div>
 </div>
 
@@ -168,10 +176,9 @@ Forever yours — Anmol ❤️
 <script>
 
 let messages = [
-"I Love You bauaa❤️",
+"I Love You ❤️",
 "You are my world 💜",
 "I miss you 🥺",
-"14 April 2026 💜",
 "You are my forever ❤️",
 "Only you & me 💞"
 ];
@@ -180,19 +187,28 @@ let msgIndex = 0;
 let interval;
 let targetDate;
 
-// load saved date
-if(localStorage.getItem("loveDate")){
-  targetDate = new Date(localStorage.getItem("loveDate"));
-  showMain();
-  startCountdown();
+/* PLAY MUSIC */
+function playMusic(){
+  document.getElementById("music").play();
 }
 
+/* DARK MODE */
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+
+/* START */
 function start(){
   let input = document.getElementById("dateInput").value;
+  let n1 = document.getElementById("name1").value;
+  let n2 = document.getElementById("name2").value;
+
   if(!input) return;
 
-  if(!localStorage.getItem("loveDate")){
-    localStorage.setItem("loveDate", input);
+  localStorage.setItem("loveDate", input);
+
+  if(n1 && n2){
+    document.getElementById("title").innerText = `💜 ${n1} ❤️ ${n2} 💜`;
   }
 
   targetDate = new Date(input);
@@ -200,6 +216,7 @@ function start(){
   startCountdown();
 }
 
+/* SHOW */
 function showMain(){
   document.getElementById("setupBox").classList.add("hidden");
   document.getElementById("mainBox").classList.remove("hidden");
@@ -207,6 +224,20 @@ function showMain(){
   document.getElementById("extra").classList.remove("hidden");
 }
 
+/* TYPING EFFECT */
+function typeText(text){
+  let i = 0;
+  let el = document.getElementById("msg");
+  el.innerText = "";
+
+  let typing = setInterval(()=>{
+    el.innerText += text[i];
+    i++;
+    if(i >= text.length) clearInterval(typing);
+  },50);
+}
+
+/* COUNTDOWN */
 function startCountdown(){
   interval = setInterval(()=>{
     let now = new Date().getTime();
@@ -214,7 +245,8 @@ function startCountdown(){
 
     if(dist <= 0){
       document.body.innerHTML = `
-      <h1 style="margin-top:40vh;">💖 See You Soon My Love ❤️</h1>
+      <h1 style="margin-top:30vh;">💖 Finally Together ❤️</h1>
+      <p>This moment was worth the wait 🥺</p>
       `;
       clearInterval(interval);
       return;
@@ -232,24 +264,23 @@ function startCountdown(){
     document.getElementById("s").innerText =
       Math.floor((dist%(1000*60))/1000);
 
-    document.getElementById("msg").innerText =
-      messages[msgIndex++ % messages.length];
+    typeText(messages[msgIndex++ % messages.length]);
 
   },1000);
 }
 
-/* miss me */
+/* MISS ME */
 function missMe(){
-  alert("🥺 I miss you too Akriti ❤️");
+  alert("🥺 I miss you too ❤️");
 }
 
-/* letter */
+/* LETTER */
 function toggleLetter(){
   let l = document.getElementById("letter");
   l.style.display = l.style.display === "block" ? "none" : "block";
 }
 
-/* hearts */
+/* HEARTS */
 setInterval(()=>{
   let h = document.createElement("div");
   h.className = "heart";
